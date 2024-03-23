@@ -30,18 +30,18 @@ function config() {
 	echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} cuenta con las siguientes ips: ${endColour}"
 	ip address show dev "$iface" | grep -w inet | awk '{print $2}'
 	echo -e "\n${greenColour}Limpiar interfaz? (y/n)> ${endColour}"
-	read choice
+	read -p -r choice
 	if [ "$choice" == "y" ]; then
 		ip address flush dev "$iface"
 		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se limpió correctamente ${endColour}"
 	fi
 	echo -e "\n${greenColour}Dirección IP a configurar (ip/mask)> ${endColour}"
-	read ip
+	read -p -r ip
 	ip address add "$ip" dev "$iface"
 	if [ "$(ip address show dev "$iface" | grep state | cut -d" " -f 9)" == "DOWN" ]; then
 		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} se encuentra apagada ${endColour}"
 		echo -e "\n${greenColour}Levantar interfaz? (y/n)> ${endColour}"
-		read choice
+		read -p -r  choice
 		if [ "$choice" == "y" ]; then
 			ip link set dev "$iface" up
 			echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se levantó correctamente ${endColour}"
