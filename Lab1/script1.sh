@@ -13,7 +13,6 @@ grayColour="\e[0;37m\033[1m"
 trap ctrl_c INT
 function ctrl_c() {
 	echo -e "\n${redColour}[!] Saliendo del programa...\n${endColour}"
-	tput cnorm
 	exit 1
 }
 
@@ -31,18 +30,18 @@ function config() {
 	echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} cuenta con las siguientes ips: ${endColour}"
 	ip address show dev "$iface" | grep -w inet | awk '{print $2}'
 	echo -e "\n${greenColour}Limpiar interfaz? (y/n)> ${endColour}"
-	read -r choice
+	read choice
 	if [ "$choice" == "y" ]; then
 		ip address flush dev "$iface"
 		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se limpió correctamente ${endColour}"
 	fi
 	echo -e "\n${greenColour}Dirección IP a configurar (ip/mask)> ${endColour}"
-	read -r -n 1 -s ip
+	read ip
 	ip address add "$ip" dev "$iface"
 	if [ "$(ip address show dev "$iface" | grep state | cut -d" " -f 9)" == "DOWN" ]; then
 		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} se encuentra apagada ${endColour}"
 		echo -e "\n${greenColour}Levantar interfaz? (y/n)> ${endColour}"
-		read -r choice
+		read choice
 		if [ "$choice" == "y" ]; then
 			ip link set dev "$iface" up
 			echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se levantó correctamente ${endColour}"
@@ -53,7 +52,6 @@ function config() {
 }
 
 #Ejecucion principal del programa
-tput civis
 counter=0
 while getopts "i,h,c:" arg; do
 	case ${arg} in
@@ -68,14 +66,11 @@ while getopts "i,h,c:" arg; do
 		;;
 	?)
 		helpPanel
-		tput cnorm
 		exit 1
 		;;
 	esac
 done
 if [ "$counter" -eq 0 ]; then
 	helpPanel
-	tput cnorm
 	exit 0
 fi
-tput cnorm
