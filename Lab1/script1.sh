@@ -9,6 +9,14 @@ purpleColour="\e[0;35m\033[1m"
 turquoiseColour="\e[0;36m\033[1m"
 grayColour="\e[0;37m\033[1m"
 
+#Catch the sigkill signal when it is send to end with CTRL-C to kill the program
+trap ctrl_c INT
+function ctrl_c() {
+	echo -e "\n${redColour}[!] Saliendo del programa...\n${endColour}"
+	tput cnorm
+	exit 1
+}
+
 function helpPanel() {
 	echo -e "\n${greenColour}Este script realiza la configuración de una interfaz de red${endColour}\n"
 	echo -e "${redColour}[!] Uso: $0${endColour}\n"
@@ -16,8 +24,6 @@ function helpPanel() {
 	echo -ne "${endColour}"
 	echo -e "\n\n${grayColour}[-i]${endColour}${yellowColour}: Listar información de interfaces${endColour}\n"
 	echo -e "${grayColour}[-c]${endColour}${yellowColour}: Configurar una interfaz${endColour}${blueColour} (Ejemplo: -c ens3)${endColour}\n"
-	echo -e "${grayColour}[-h]${endColour}${yellowColour}: Invocar este panel de ayuda${endColour}\n"
-	tput cnorm
 }
 
 function config() {
@@ -48,28 +54,28 @@ function config() {
 
 #Ejecucion principal del programa
 tput civis
+counter=0
 while getopts "i,h,c:" arg; do
 	case ${arg} in
 	i)
 		ip -br addr
-		tput cnorm
-		exit 0
+		let counter+=1
 		;;
 	c)
 		iface_input=$OPTARG
 		config "${iface_input}"
-		tput cnorm
-		exit 0
-		;;
-	h)
-		helpPanel
-		exit 0
+		let counter+=1
 		;;
 	?)
 		helpPanel
+		tput cnorm
 		exit 1
 		;;
 	esac
 done
-helpPanel
-exit 0
+if [ "$counter" -eq 0 ]; then
+	helpPanel
+    tput cnorm
+	exit 0
+fi
+tput cnorm
