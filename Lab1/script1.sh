@@ -10,14 +10,40 @@ turquoiseColour="\e[0;36m\033[1m"
 grayColour="\e[0;37m\033[1m"
 
 function helpPanel() {
-	echo -e "\n${greenColour}Este script realiza la configuración de una interfaz de red${endColour}"
-	echo -e "\n${redColour}[!] Uso: $0${endColour}\n"
+	echo -e "\n${greenColour}Este script realiza la configuración de una interfaz de red${endColour}\n"
+	echo -e "${redColour}[!] Uso: $0${endColour}\n"
 	for _ in $(seq 1 80); do echo -ne "${turquoiseColour}-"; done
 	echo -ne "${endColour}"
 	echo -e "\n\n${grayColour}[-i]${endColour}${yellowColour}: Listar información de interfaces${endColour}\n"
 	echo -e "${grayColour}[-c]${endColour}${yellowColour}: Configurar una interfaz${endColour}${blueColour} (Ejemplo: -c ens3)${endColour}\n"
 	echo -e "${grayColour}[-h]${endColour}${yellowColour}: Invocar este panel de ayuda${endColour}\n"
 	tput cnorm
+}
+
+function config() {
+	local iface=$1
+	echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} cuenta con las siguientes ips: ${endColour}"
+	ip address show dev "$iface" | grep -w inet | awk '{print $2}'
+	echo -e "\n${greenColour}Limpiar interfaz? (y\n)> ${endColour}"
+	read -r -n 1 -s choice
+	if [ "$choice" == "y" ]; then
+		ip address flush dev "$iface"
+		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se limpió correctamente ${endColour}"
+	fi
+	echo -e "\n${greenColour}Dirección IP a configurar (ip/mask)> ${endColour}"
+	read -r -n 1 -s ip
+	ip address add "$ip" dev "$iface"
+	if [ "$(ip address show dev "$iface" | grep state | cut -d" " -f 9)" == "DOWN" ]; then
+		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} se encuentra apagada ${endColour}"
+		echo -e "\n${greenColour}Levantar interfaz? (y\n)> ${endColour}"
+		read -r -n 1 -s choice
+		if [ "$choice" == "y" ]; then
+			ip link set dev "$iface" up
+			echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se levantó correctamente ${endColour}"
+		fi
+	fi
+	echo -e "\n${purpleColour}Datos relevantes de la interfaz ${endColour}${blueColour}${iface} >${endColour}"
+	ip address show dev "$iface"
 }
 
 #Ejecucion principal del programa
@@ -30,8 +56,8 @@ while getopts "i,h,c:" arg; do
 		exit 0
 		;;
 	c)
-		interfaz_output=$OPTARG
-		echo "${interfaz_output}"
+		iface_input=$OPTARG
+		config "${iface_input}"
 		tput cnorm
 		exit 0
 		;;
