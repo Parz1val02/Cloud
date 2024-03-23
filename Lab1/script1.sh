@@ -31,7 +31,7 @@ function config() {
 	echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} cuenta con las siguientes ips: ${endColour}"
 	ip address show dev "$iface" | grep -w inet | awk '{print $2}'
 	echo -e "\n${greenColour}Limpiar interfaz? (y/n)> ${endColour}"
-	read -r -n 1 -s choice
+	read -r choice
 	if [ "$choice" == "y" ]; then
 		ip address flush dev "$iface"
 		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se limpió correctamente ${endColour}"
@@ -42,7 +42,7 @@ function config() {
 	if [ "$(ip address show dev "$iface" | grep state | cut -d" " -f 9)" == "DOWN" ]; then
 		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} se encuentra apagada ${endColour}"
 		echo -e "\n${greenColour}Levantar interfaz? (y/n)> ${endColour}"
-		read -r -n 1 -s choice
+		read -r choice
 		if [ "$choice" == "y" ]; then
 			ip link set dev "$iface" up
 			echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se levantó correctamente ${endColour}"
@@ -75,7 +75,7 @@ while getopts "i,h,c:" arg; do
 done
 if [ "$counter" -eq 0 ]; then
 	helpPanel
-    tput cnorm
+	tput cnorm
 	exit 0
 fi
 tput cnorm
