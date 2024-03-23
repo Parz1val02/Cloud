@@ -33,7 +33,7 @@ function config() {
 	read -r choice
 	if [ "$choice" == "y" ]; then
 		ip address flush dev "$iface"
-		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se limpió correctamente ${endColour}"
+		echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} se limpió correctamente ${endColour}"
 	fi
 	echo -e "\n${greenColour}Dirección IP a configurar (ip/mask)> ${endColour}"
 	read -r ip
@@ -44,7 +44,7 @@ function config() {
 		read -r choice
 		if [ "$choice" == "y" ]; then
 			ip link set dev "$iface" up
-			echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour}se levantó correctamente ${endColour}"
+			echo -e "\n${greenColour}La interfaz ${endColour}${blueColour}${iface}${endColour}${greenColour} se levantó correctamente ${endColour}"
 		fi
 	fi
 	echo -e "\n${purpleColour}Datos relevantes de la interfaz ${endColour}${blueColour}${iface} >${endColour}"
