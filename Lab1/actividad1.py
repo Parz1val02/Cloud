@@ -76,7 +76,7 @@ if __name__ == "__main__":
         ping = "ping -c 1 " + host + ' | grep -w "received" | cut -d" " -f4'
         ping_command = subprocess.check_output(ping, shell=True)
         check_ping = ping_command.decode("utf-8")
-        if check_ping == "1":
+        if check_ping.strip() == "1":
             hostname, byte_dict = connection(host, username, password)
             byte_keys = byte_dict.keys()
             for j in byte_keys:
