@@ -73,11 +73,10 @@ if __name__ == "__main__":
     # Workers info
     for i in ips:
         host = f"10.0.0.{i}"
-        ping = "echo $(ping -c 1 " + host + ")"
+        ping = "ping -c 1 " + host + ' | grep -w "received" | cut -d" " -f4'
         ping_command = subprocess.check_output(ping, shell=True)
-        check = subprocess.check_output("echo $?", shell=True)
-        check_ouput = check.decode("utf-8")
-        if check_ouput == "0":
+        check_ping = ping_command.decode("utf-8")
+        if check_ping == "1":
             cmd = "echo -n $(hostname)"
             returned_output = subprocess.check_output(cmd, shell=True)
             hostnameH = returned_output.decode("utf-8")
