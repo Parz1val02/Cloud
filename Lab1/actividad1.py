@@ -87,4 +87,7 @@ if __name__ == "__main__":
         else:
             print(f"No se puso entablar conexion con {host}")
     print(info)
-    sendEmail(info)
+    x = info.splitlines()
+    for i in x:
+        print(i)
+    # sendEmail(info)
