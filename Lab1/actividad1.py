@@ -29,7 +29,7 @@ def sendEmail(info):
     sender_email = "rodrigoedu11@gmail.com"
     receiver_email = "r.barrios@pucp.edu.pe"
     message = MIMEMultipart("alternative")
-    message["Subject"] = "multipart test"
+    message["Subject"] = "LAB1_TEL141_2024-1_20202073"
     message["From"] = sender_email
     message["To"] = receiver_email
     cc_recipients = ["jbzambrano@pucp.edu.pe"]
@@ -72,4 +72,5 @@ if __name__ == "__main__":
         byte_keys = byte_dict.keys()
         for j in byte_keys:
             info += "\n| " + hostname + " | " + j + " | " + byte_dict[j] + " |"
+    print(info)
     sendEmail(info)
