@@ -35,7 +35,5 @@ if __name__ == "__main__":
         hostname, byte_dict = connection(host, username, password)
         byte_keys = byte_dict.keys()
         for j in byte_keys:
-            #info += "\n| " + hostname + " | " + j + " | " + byte_keys[j]
-            print(j)
-        print(hostname)
-        print(byte_dict)
+            info += "\n| " + hostname + " | " + j + " | " + byte_dict[j]
+    print(info)
