@@ -34,7 +34,7 @@ def sendEmail(info):
     message["From"] = sender_email
     message["To"] = receiver_email
     cc_recipients = ["jbzambrano@pucp.edu.pe"]
-    # message["Cc"] = ", ".join(cc_recipients)
+    message["Cc"] = ", ".join(cc_recipients)
 
     # write the text/plain part
     text = ""
