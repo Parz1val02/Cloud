@@ -37,11 +37,16 @@ def sendEmail(info):
     # message["Cc"] = ", ".join(cc_recipients)
 
     # write the text/plain part
+    text = ""
+    x = info.splitlines()
+    for i in x:
+        text += i + "<br>"
+
     # write the HTML part
     html = f"""\
     <html>
       <body>
-        <p><strong>{info}</strong></p>
+        <p><strong>{text}</strong></p>
       </body>
     </html>
     """
@@ -69,8 +74,12 @@ if __name__ == "__main__":
     for i in ips:
         host = f"10.0.0.{i}"
         ping = "echo $(ping -c 1 " + host + ")"
-        returned_output = subprocess.check_output(ping, shell=True)
-        if returned_output:
+        ping_command = subprocess.check_output(ping, shell=True)
+        check = subprocess.check_output("echo $?", shell=True)
+        check_ouput = check.decode("utf-8")
+        if check_ouput == "0":
+            cmd = "echo -n $(hostname)"
+            returned_output = subprocess.check_output(cmd, shell=True)
             hostnameH = returned_output.decode("utf-8")
             hostname, byte_dict = connection(host, username, password)
             byte_keys = byte_dict.keys()
@@ -85,9 +94,6 @@ if __name__ == "__main__":
                     + " \t|"
                 )
         else:
-            print(f"No se puso entablar conexion con {host}")
+            print(f"No se pudo entablar conexion con {host}")
     print(info)
-    x = info.splitlines()
-    for i in x:
-        print(i)
-    # sendEmail(info)
+    sendEmail(info)
