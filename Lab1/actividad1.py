@@ -13,7 +13,7 @@ def connection(host, username, password):
     _stdin, _stdout, _stderr = client.exec_command(cmd2)
     ifaces = _stdout.read().decode()
     for iface in ifaces.splitlines():
-        cmd3 = "ip -s link show " + iface + " | tail -n 1 | awk '{print $1}'"
+        cmd3 = "echo -n $(ip -s link show " + iface + " | tail -n 1 | awk '{print $1}')"
         _stdin, _stdout, _stderr = client.exec_command(cmd3)
         bytes_tx = _stdout.read().decode()
         byte_dict[iface] = bytes_tx
