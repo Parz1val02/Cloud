@@ -77,9 +77,6 @@ if __name__ == "__main__":
         ping_command = subprocess.check_output(ping, shell=True)
         check_ping = ping_command.decode("utf-8")
         if check_ping == "1":
-            cmd = "echo -n $(hostname)"
-            returned_output = subprocess.check_output(cmd, shell=True)
-            hostnameH = returned_output.decode("utf-8")
             hostname, byte_dict = connection(host, username, password)
             byte_keys = byte_dict.keys()
             for j in byte_keys:
