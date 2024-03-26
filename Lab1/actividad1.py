@@ -27,10 +27,15 @@ if __name__ == "__main__":
     username = "ubuntu"
     password = "ubuntu"
     ips = ["30", "40", "50"]
+    info = ""
 
     # Workers info
     for i in ips:
         host = f"10.0.0.{i}"
         hostname, byte_dict = connection(host, username, password)
+        byte_keys = byte_dict.keys()
+        for j in byte_keys:
+            #info += "\n| " + hostname + " | " + j + " | " + byte_keys[j]
+            print(j)
         print(hostname)
         print(byte_dict)
