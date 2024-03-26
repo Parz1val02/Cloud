@@ -1,4 +1,7 @@
 import paramiko
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 def connection(host, username, password):
@@ -17,9 +20,42 @@ def connection(host, username, password):
         _stdin, _stdout, _stderr = client.exec_command(cmd3)
         bytes_tx = _stdout.read().decode()
         byte_dict[iface] = bytes_tx
+    client.close()
     return hostname, byte_dict
 
-    client.close()
+
+def sendEmail(info):
+    password = "qumz znxi uqne qyxv"
+    sender_email = "rodrigoedu11@gmail.com"
+    receiver_email = "r.barrios@pucp.edu.pe"
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "multipart test"
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    cc_recipients = ["jbzambrano@pucp.edu.pe"]
+    message["Cc"] = ", ".join(cc_recipients)
+
+    # write the text/plain part
+    # write the HTML part
+    html = f"""\
+    <html>
+      <body>
+        <p><strong>{info}</strong></p>
+      </body>
+    </html>
+    """
+
+    # convert both parts to MIMEText objects and add them to the MIMEMultipart message
+    part1 = MIMEText(info, "plain")
+    part2 = MIMEText(html, "html")
+    message.attach(part1)
+    message.attach(part2)
+
+    # send your email
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message.as_string())
 
 
 if __name__ == "__main__":
@@ -27,7 +63,7 @@ if __name__ == "__main__":
     username = "ubuntu"
     password = "ubuntu"
     ips = ["30", "40", "50"]
-    info = ""
+    info = "| HOSTNAME DEL EQUIPO REMOTO | INTERFAZ DEL EQUIPO REMOTO | BYTES TRANSFERIDOS |"
 
     # Workers info
     for i in ips:
@@ -35,5 +71,5 @@ if __name__ == "__main__":
         hostname, byte_dict = connection(host, username, password)
         byte_keys = byte_dict.keys()
         for j in byte_keys:
-            info += "\n| " + hostname + " | " + j + " | " + byte_dict[j]
-    print(info)
+            info += "\n| " + hostname + " | " + j + " | " + byte_dict[j] + " |"
+    sendEmail(info)
