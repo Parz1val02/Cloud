@@ -1,5 +1,6 @@
 import paramiko
 import smtplib
+import subprocess
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -33,7 +34,7 @@ def sendEmail(info):
     message["From"] = sender_email
     message["To"] = receiver_email
     cc_recipients = ["jbzambrano@pucp.edu.pe"]
-    message["Cc"] = ", ".join(cc_recipients)
+    # message["Cc"] = ", ".join(cc_recipients)
 
     # write the text/plain part
     # write the HTML part
@@ -59,7 +60,6 @@ def sendEmail(info):
 
 
 if __name__ == "__main__":
-
     username = "ubuntu"
     password = "ubuntu"
     ips = ["30", "40", "50"]
@@ -68,9 +68,23 @@ if __name__ == "__main__":
     # Workers info
     for i in ips:
         host = f"10.0.0.{i}"
-        hostname, byte_dict = connection(host, username, password)
-        byte_keys = byte_dict.keys()
-        for j in byte_keys:
-            info += "\n| " + hostname + " | " + j + " | " + byte_dict[j] + " |"
+        ping = "echo $(ping -c 1" + host + ")"
+        returned_output = subprocess.check_output(ping, shell=True)
+        if returned_output:
+            hostnameH = returned_output.decode("utf-8")
+            hostname, byte_dict = connection(host, username, password)
+            byte_keys = byte_dict.keys()
+            for j in byte_keys:
+                info += (
+                    "\n|\t "
+                    + hostname
+                    + " \t|\t "
+                    + j
+                    + " \t|\t "
+                    + byte_dict[j]
+                    + " \t|"
+                )
+        else:
+            print(f"No se puso entablar conexion con {host}")
     print(info)
     sendEmail(info)
