@@ -7,7 +7,7 @@ if [ "$#" -le 1 ]; then
 	echo "Uso: $0 <nombre_OVS> <interfaz_1> <interfaz_2> ..."
 	exit 1
 fi
-if ! existe_ovs "$?"; then
+if ! existe_ovs "$1"; then
 	ovs-vsctl add-br "$1"
 	echo "OVS $1 creado"
 else

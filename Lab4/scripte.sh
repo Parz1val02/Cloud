@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Parámetros
+vlan_id_1=$1
+vlan_id_2=$2
+
+# Habilitar el forwarding de IPv4 en el kernel
+echo "1" > /proc/sys/net/ipv4/ip_forward
+
+# Configurar reglas de iptables para el enrutamiento entre las dos redes VLAN
+iptables -t nat -A POSTROUTING -s 10.0.$vlan_id_1.0/24 -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 10.0.$vlan_id_2.0/24 -o eth0 -j MASQUERADE
+
+# Permitir el tráfico de reenvío entre las dos redes VLAN
+iptables -A FORWARD -i ovs1-vlan$vlan_id_1 -o ovs1-vlan$vlan_id_2 -j ACCEPT
+iptables -A FORWARD -i ovs1-vlan$vlan_id_2 -o ovs1-vlan$vlan_id_1 -j ACCEPT
+
+echo "Configuración completada para permitir la comunicación entre las VLAN $vlan_id_1 y $vlan_id_2."
+
