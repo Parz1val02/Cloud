@@ -4,9 +4,7 @@ nombre_OVS=$2
 vlan_ID=$3
 puerto_VNC=$4
 generate_random_mac() {
-	printf '%02x:%02x:%02x:%02x:%02x:%02x\n' \
-		$((RANDOM % 256)) $((RANDOM % 256)) $((RANDOM % 256)) \
-		$((RANDOM % 256)) $((RANDOM % 256)) $((RANDOM % 256))
+	printf '20:20:20:73:%02X:%02X\n' $((RANDOM % 256)) $((RANDOM % 256))
 }
 if [ $# -ne 4 ]; then
 	echo "Uso: $0 <nombre_VM> <nombre_OVS> <vlan_id> <puerto_vnc>"
