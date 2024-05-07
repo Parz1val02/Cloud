@@ -31,12 +31,13 @@ subsiguiente_direccion=$(siguiente_ip "$siguiente_direccion")
 
 interfaz_interna_OVS "$nombre_OVS" "$vlan_id"
 
-ip link set vlan"${vlan_id}" netns ns-dhcp-server
-ip netns exec ns-dhcp-server ip link set dev lo up
-ip netns exec ns-dhcp-server ip link set dev vlan"${vlan_id}" up
-ip netns exec ns-dhcp-server ip address add "$subsiguiente_direccion" dev vlan"${vlan_id}"
+ip netns add ns-dhcp-server-vlan"${vlan_id}"
+ip link set vlan"${vlan_id}" netns ns-dhcp-server-vlan"${vlan_id}"
+ip netns exec ns-dhcp-server-vlan"${vlan_id}" ip link set dev lo up
+ip netns exec ns-dhcp-server-vlan"${vlan_id}" ip link set dev vlan"${vlan_id}" up
+ip netns exec ns-dhcp-server-vlan"${vlan_id}" ip address add "$subsiguiente_direccion" dev vlan"${vlan_id}"
 ip address add "$siguiente_direccion" dev "$nombre_OVS"
-ip netns exec ns-dhcp-server dnsmasq --interface=vlan"${vlan_id}" \
+ip netns exec ns-dhcp-server-vlan"${vlan_id}" dnsmasq --interface=vlan"${vlan_id}" \
 	--dhcp-range="${rango_dhcp}" \
 	--dhcp-option=3,"$siguiente_direccion" \
 	--dhcp-option=6,8.8.8.8,8.8.4.4
