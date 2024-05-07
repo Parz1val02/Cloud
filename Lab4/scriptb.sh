@@ -19,5 +19,6 @@ for iface in "$@"; do
 	fi
 	ovs-vsctl add-port "$1" "$iface"
 done
+ip link set dev "$1" up
 echo "Configuraciones completadas"
 exit 0
