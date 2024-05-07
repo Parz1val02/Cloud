@@ -1,11 +1,4 @@
 #!/bin/bash
-
-nombre_OVS=$1
-nombre_red=$2
-vlan_id=$3
-direccion_red=$4
-rango_dhcp=$5
-
 interfaz_interna_OVS() {
 	ovs-vsctl add-port "$1" vlan"${2}" tag="${2}" -- set interface vlan"${2}" type=internal
 }
@@ -26,19 +19,19 @@ if [ $# -ne 5 ]; then
 	echo "Uso: $0 <nombre_OVS> <nombre_red> <vlan_id> <direccion_red> <rango_dhcp>"
 	exit 1
 fi
-siguiente_direccion=$(siguiente_ip "$direccion_red")
+siguiente_direccion=$(siguiente_ip "$4")
 subsiguiente_direccion=$(siguiente_ip "$siguiente_direccion")
 
-interfaz_interna_OVS "$nombre_OVS" "$vlan_id"
+interfaz_interna_OVS "$1" "$3"
 
-ip netns add ns-dhcp-server-vlan"${vlan_id}"
-ip link set vlan"${vlan_id}" netns ns-dhcp-server-vlan"${vlan_id}"
-ip netns exec ns-dhcp-server-vlan"${vlan_id}" ip link set dev lo up
-ip netns exec ns-dhcp-server-vlan"${vlan_id}" ip link set dev vlan"${vlan_id}" up
-ip netns exec ns-dhcp-server-vlan"${vlan_id}" ip address add "$subsiguiente_direccion" dev vlan"${vlan_id}"
-ip address add "$siguiente_direccion" dev "$nombre_OVS"
-ip netns exec ns-dhcp-server-vlan"${vlan_id}" dnsmasq --interface=vlan"${vlan_id}" \
-	--dhcp-range="${rango_dhcp}" \
+ip netns add ns-dhcp-server-vlan"${3}"
+ip link set vlan"${3}" netns ns-dhcp-server-vlan"${3}"
+ip netns exec ns-dhcp-server-vlan"${3}" ip link set dev lo up
+ip netns exec ns-dhcp-server-vlan"${3}" ip link set dev vlan"${3}" up
+ip netns exec ns-dhcp-server-vlan"${3}" ip address add "$subsiguiente_direccion" dev vlan"${3}"
+ip address add "$siguiente_direccion" dev "$1"
+ip netns exec ns-dhcp-server-vlan"${3}" dnsmasq --interface=vlan"${3}" \
+	--dhcp-range="${5}" \
 	--dhcp-option=3,"$siguiente_direccion" \
 	--dhcp-option=6,8.8.8.8,8.8.4.4
 echo "Red interna del orquestador creada correctamente."
